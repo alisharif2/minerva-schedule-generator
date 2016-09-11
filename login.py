@@ -1,5 +1,11 @@
 import requests, os, sys, argparse, getpass
 
+# Written by Ali Murtaza Sharif
+# Date: 10-Sept-2016
+# Please don't steal
+
+# TODO Some refactoring is needed to split up this function into more logical pieces
+# TODO Find a way to improve  the robustness of the request mechanism
 def login(userid, user_pass, term, semester, year, write_file = False):
     # login details
     payload = {

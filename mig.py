@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 
+# Written by Ali Murtaza Sharif
+# Date: 10-Sept-2016
+# Please don't steal
+
 import requests, os, sys, argparse, getpass
 from login import login
 from sched_html_reader import extract_schedule

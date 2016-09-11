@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 
+# Written by Ali Murtaza Sharif
+# Date: 10-Sept-2016
+# Please don't steal
+
 from bs4 import BeautifulSoup as bsoup
 from collections import defaultdict
 
