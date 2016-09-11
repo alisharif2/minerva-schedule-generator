@@ -1,8 +1,8 @@
-import requests, os, sys, argparse, getpass
-
 # Written by Ali Murtaza Sharif
 # Date: 10-Sept-2016
 # Please don't steal
+
+import requests, os, sys, argparse, getpass
 
 # TODO Some refactoring is needed to split up this function into more logical pieces
 # TODO Find a way to improve  the robustness of the request mechanism

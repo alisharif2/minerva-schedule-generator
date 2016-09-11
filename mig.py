@@ -4,9 +4,11 @@
 # Date: 10-Sept-2016
 # Please don't steal
 
-import requests, os, sys, argparse, getpass
+import requests, os, sys, argparse, getpass, pytz
 from login import login
 from sched_html_reader import extract_schedule
+from ical_gen import *
+from datetime import datetime
 
 # Command line argument check
 parser = argparse.ArgumentParser(description='Login to minerva and download personal schedule page in html')
