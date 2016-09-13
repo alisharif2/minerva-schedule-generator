@@ -1,20 +1,53 @@
-from icalendar import Calendar, Event
+from icalendar import Calendar, Event, vDatetime
 from datetime import *
 from dateutil.relativedelta import *
+import pytz
 
-class course_calendar(Calendar):
-    pass
+class Course_calendar(Calendar):
+    @classmethod
+    def create(cls, course_data):
+        cal = cls()
+        cal.add('prodid', '-//Ali Sharif//Minerva Schedule Generator//EN')
+        cal.add('version', '2.0')
 
-class course(Event):
+        # The dates are stored like this
+        # Sep 02, 2016 9:35AM
+        date_format = "%b %d, %Y %I:%M%p"
+
+        for course_name, course_info in course_data.items():
+            # Read and convert the course times into datetime objects
+            dtstart = datetime.strptime(course_info['dtstart'], date_format)
+            dtend = datetime.strptime(course_info['dtend'], date_format)
+            # last_day also has the same date format but lacks the time part so we just us the first par of the string and insert a space at the beginning of the string
+            last_day = datetime.strptime(course_info['last day'], " %b %d, %Y")
+
+            cal.add_component(Course.create(course_name, course_info['Where'], dtstart, dtend, course_info['Days'], last_day))
+
+        return cal
+
+# Use the iCalendar notation for weekdays
+def ical_weekdays(days):
+    ical_days = []
+    if 'M' in days: ical_days.append(MO)
+    if 'T' in days: ical_days.append(TU)
+    if 'W' in days: ical_days.append(WE)
+    if 'R' in days: ical_days.append(TH)
+    if 'F' in days: ical_days.append(FR)
+
+    return ical_days
+
+class Course(Event):
     @classmethod
     def create(cls, summary, location, start_time, end_time, days, last_day):
-        new_course = cls()
         # Create new VEVENT entry
+        new_course = cls()
         new_course.add('summary', summary)
         new_course.add('dtstart', start_time)
         new_course.add('dtend', end_time)
         new_course.add('location', location)
-        new_course['RRULE'] = "FREQ=WEEKLY;UNTIL={};BYDAY={}".format(ical_dt_format(last_day), ''.join(days))
+        # Since these are classes we can assume that they occur weekly
+        # TODO fix last day - last day isn't calculate properly and instead uses the last day of the semester
+        new_course.add('rrule', { 'FREQ' : 'WEEKLY', 'UNTIL' : last_day, 'BYDAY' : ical_weekdays(days) })
 
         return new_course
 
@@ -22,7 +55,4 @@ class course(Event):
 # For example 2nd Dec, 2016 is the last friday before 5th Dec, 2016
 def last_day_before(day, end_date):
     return end_date + relativedelta(weeks=-1, weekday=day)
-
-def ical_dt_format(dt):
-    return dt.strftime("%Y%m%dT%H%M%S")
 
