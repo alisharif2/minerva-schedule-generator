@@ -4,12 +4,10 @@
 # Date: 10-Sept-2016
 # Please don't steal
 
-import requests, os, sys, argparse, getpass, pytz
+import argparse, getpass
 from login import login
 from sched_html_reader import extract_schedule
 from ical_gen import *
-from datetime import datetime
-from pprint import pprint
 
 # Command line argument check
 parser = argparse.ArgumentParser(description='Login to minerva and download personal schedule page in html')
@@ -46,16 +44,24 @@ elif args.winter:
     term = args.year * 100 + 1
     semester = 'winter'
 
+print("Retrieving {} {} schedule".format(semester, args.year))
+
 if args.html_sched is None:
-    raw_html = login(args.userid, user_pass, term, semester, args.year, True)
+    # You can add a True as the last argument if you want to generate a file to be saved
+    # If you save the file you can skip the login process using the '-s' switch
+    raw_html = login(args.userid, user_pass, term, semester, args.year)
 else:
     with open(args.html_sched, 'r') as f:
         raw_html = f.read()
+
+print("Parsing page html")
 course_data = extract_schedule(raw_html)
 
+print("Creating VEVENT entries")
 new_calendar = Course_calendar.create(course_data)
 
-with open("output.ics", 'wb') as f:
+print("Writing to {} {}".format(semester, args.year))
+with open("{}_{}.ics".format(semester, args.year), 'wb') as f:
     f.write(new_calendar.to_ical())
 
 print("Complete!")

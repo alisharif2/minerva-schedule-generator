@@ -2,7 +2,7 @@
 # Date: 10-Sept-2016
 # Please don't steal
 
-import requests, os, sys, argparse, getpass
+import requests
 
 # TODO Some refactoring is needed to split up this function into more logical pieces
 # TODO Find a way to improve  the robustness of the request mechanism
@@ -14,6 +14,7 @@ def login(userid, user_pass, term, semester, year, write_file = False):
             }
     
     # The important urls
+    # NOTE maybe put them in a dictionary?
     base_url   = "https://horizon.mcgill.ca/pban1/"
     start_url  = base_url + "twbkwbis.P_WWWLogin"
     post_url   = base_url + "twbkwbis.P_ValLogin"
@@ -41,6 +42,9 @@ def login(userid, user_pass, term, semester, year, write_file = False):
             f.write(target_page.text)
     
     # Logout and terminate our session
+    # NOTE logout currently isn't working properly
+    # I can't send GET request to logout and I don't know if sending a post request will terminate my session on the server
+    # Whether or not this becomes a problem remains to be seen
     minerva.get(logout_url, cookies=target_page.cookies)
 
     return target_page.text

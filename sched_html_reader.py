@@ -11,6 +11,7 @@ def extract_schedule(raw_html):
     info_table = []
     schedule_table = []
     for table in clean_html.find_all("table", class_="datadisplaytable"):
+        # Seperate the table containing the scheduling information from the course info box
         if "Scheduled Meeting Times" in table.caption.get_text():
             schedule_table.append(table)
         else:
@@ -21,12 +22,10 @@ def extract_schedule(raw_html):
     for infobox, meeting_times in tables:
         class_title = infobox.caption.get_text()
         for title_box, value_box in zip(list(meeting_times.find_all('th')), list(meeting_times.find_all('td'))):
+            # Parse the scheduling table and store the data into a dictionary with the class title as the key
             course_data_raw[class_title][title_box.string] = value_box.string
 
     return format(course_data_raw)
-
-def convert_days(day_string):
-    return day_string.replace('M', 'MO,').replace('T', 'TU,').replace('W', 'WE,').replace('R', 'TR,').replace('F', 'FR,')[:-1]
 
 def format(course_data_raw):
     course_data = dict(course_data_raw)
@@ -45,6 +44,7 @@ def format(course_data_raw):
         start_end = course_info['Date Range'].split('-')
         course_data[course_title]['dtstart'] = start_end[0] + time_range[0]
         course_data[course_title]['dtend'] = start_end[0] + time_range[1]
+
         course_data[course_title]['last day'] = start_end[1]
 
     return course_data
