@@ -14,15 +14,14 @@ def extract_schedule(raw_html):
         # Seperate the table containing the scheduling information from the course info box
         if "Scheduled Meeting Times" in table.caption.get_text():
             schedule_table.append(table)
-        else:
-            info_table.append(table)
+            info_table.append(table.find_previous_sibling())
 
     tables = zip(info_table, schedule_table)
     course_data_raw = defaultdict(dict)
     for infobox, meeting_times in tables:
+        # Parse the scheduling table and store the data into a dictionary with the class title as the key
         class_title = infobox.caption.get_text()
         for title_box, value_box in zip(list(meeting_times.find_all('th')), list(meeting_times.find_all('td'))):
-            # Parse the scheduling table and store the data into a dictionary with the class title as the key
             course_data_raw[class_title][title_box.string] = value_box.string
 
     return format(course_data_raw)
@@ -37,6 +36,12 @@ def format(course_data_raw):
     for raw_course_title, course_info in course_data_raw.items():
         course_title = re.fullmatch(r'.*\. \- (.*)', raw_course_title).group(1) + " - " + course_info['Schedule Type']
         course_data[course_title] = course_data.pop(raw_course_title)
+
+        # We have to make sure that valid data is present in the scheduling table fields
+        regex_check = re.fullmatch(r'\d?\d\:\d\d P?A?M \- \d?\d\:\d\d P?A?M', course_data[course_title]['Time'])
+        if regex_check is None:
+            del(course_data[course_title])
+            continue
 
         # Create 2 new entries for the start time and end time
         # This makes it easier to convert them to datetime objects
