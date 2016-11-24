@@ -49,7 +49,7 @@ print("Retrieving {} {} schedule".format(semester, args.year))
 if args.html_sched is None:
     # You can add a True as the last argument if you want to generate a file to be saved
     # If you save the file you can skip the login process using the '-s' switch
-    raw_html = login(args.userid, user_pass, term, semester, args.year, True)
+    raw_html = login(args.userid, user_pass, term, semester, args.year)
 else:
     with open(args.html_sched, 'r') as f:
         raw_html = f.read()

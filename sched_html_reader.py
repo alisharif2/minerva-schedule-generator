@@ -12,6 +12,8 @@ def extract_schedule(raw_html):
     schedule_table = []
     for table in clean_html.find_all("table", class_="datadisplaytable"):
         # Seperate the table containing the scheduling information from the course info box
+        # The course info box containing the course title, section and code are stored directly above the table with
+        # the scheduling information
         if "Scheduled Meeting Times" in table.caption.get_text():
             schedule_table.append(table)
             info_table.append(table.find_previous_sibling())
@@ -38,6 +40,7 @@ def format(course_data_raw):
         course_data[course_title] = course_data.pop(raw_course_title)
 
         # We have to make sure that valid data is present in the scheduling table fields
+        # otherwise the parsing performed below won't work
         regex_check = re.fullmatch(r'\d?\d\:\d\d P?A?M \- \d?\d\:\d\d P?A?M', course_data[course_title]['Time'])
         if regex_check is None:
             del(course_data[course_title])

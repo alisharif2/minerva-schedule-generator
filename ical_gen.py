@@ -1,4 +1,4 @@
-from icalendar import Calendar, Event, vDatetime
+from icalendar import Calendar, Event
 from datetime import *
 from dateutil.relativedelta import *
 
@@ -18,7 +18,6 @@ class Course_calendar(Calendar):
             dtstart = datetime.strptime(course_info['dtstart'], date_format)
             dtend = datetime.strptime(course_info['dtend'], date_format)
             # last_day also has the same date format but lacks the time part so we just use the first part of the string and insert a space at the beginning of the format string
-            # TODO fix the last day string
             last_day = datetime.strptime(course_info['last day'], " %b %d, %Y")
 
             cal.add_component(Course.create(course_name, course_info['Where'], dtstart, dtend, course_info['Days'], last_day))
